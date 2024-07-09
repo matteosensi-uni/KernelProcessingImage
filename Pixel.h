@@ -40,13 +40,13 @@ public:
         delete[] channels;
     }
 
-    int getChannel(int i) const override{
+    int getChannel(int i) const noexcept(false) override{
         if(i >= 0 && i < dim)
             return channels[i];
         else throw std::out_of_range("Index of channel out of range");
     }
 
-    void setChannel(int i, int value) override{
+    void setChannel(int i, int value) noexcept(false) override{
         if(i < 0 || i >= dim ){
             throw std::out_of_range("Index of channel out of range");
         }

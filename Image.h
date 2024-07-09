@@ -50,7 +50,7 @@ public:
         }
     }
 
-    void setPixel(BasePixel* p, int i, int j) override{
+    void setPixel(BasePixel* p, int i, int j) noexcept(false) override{
         if(i >= height || i < 0 || j < 0 || j >= width){
             throw std::out_of_range("Pixel out of range");
         }else{
@@ -58,7 +58,7 @@ public:
         }
     }
 
-    BasePixel* getPixel(int i, int j) const override{
+    BasePixel* getPixel(int i, int j) const noexcept(false) override{
         if(i >= height || i < 0 || j < 0 || j >= width) {
             throw std::out_of_range("Pixel out of range");
         }
@@ -69,7 +69,7 @@ public:
         return height;
     }
 
-    void setHeight(int h) override {
+    void setHeight(int h) noexcept(false) override {
         if(h > 0) height = h;
         else throw std::logic_error("Height can't be negative or zero");
     }
@@ -78,7 +78,7 @@ public:
         return width;
     }
 
-    void setWidth(int w) override {
+    void setWidth(int w) noexcept(false) override {
         if(w> 0) width = w;
         else throw std::logic_error("Width can't be negative");
     }
@@ -87,7 +87,7 @@ public:
         return max_value;
     }
 
-    void setMaxValue(int maxValue) override {
+    void setMaxValue(int maxValue) noexcept(false) override {
         if(maxValue> 0) max_value = maxValue;
         else throw std::logic_error("Max value can't be negative");
     }

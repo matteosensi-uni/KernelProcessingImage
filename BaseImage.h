@@ -21,7 +21,7 @@ public:
     virtual std::string getFormat() = 0;
     virtual void setFormat(const std::string& value) = 0;
     virtual bool compare(BaseImage * p) = 0;
-    virtual ~BaseImage() {}
+    virtual ~BaseImage() {};
 };
 
 

@@ -108,7 +108,7 @@ BaseImage * createImage(ImageFileHandler& file){
     }
 }
 
-void writeImagefile(BaseImage * image, ImageFileHandler& fileHandler){
+void writeImagefile(BaseImage * image, ImageFileHandler& fileHandler) noexcept(false){
     if(image->getFormat() == "P2" && split(fileHandler.getPath(), ".").back() != "pgm")
         throw std::logic_error("Writing file must be a pgm file");
     if(image->getFormat() == "P3" && split(fileHandler.getPath(), ".").back() != "ppm")
@@ -118,7 +118,7 @@ void writeImagefile(BaseImage * image, ImageFileHandler& fileHandler){
         for(int j = 0; j < image->getWidth(); j++){
             for (int k = 0; k < image->getPixel(i, j)->getDim(); k++) {
                 if(image->getPixel(i, j) == nullptr){
-                    throw std::logic_error("Image given isn't valid, some pixel aren't initialized");
+                    throw std::logic_error("Given image isn't valid, some pixel aren't initialized");
                 }
                 fileHandler.write(std::to_string(image->getPixel(i, j)->getChannel(k))+" ");
             }

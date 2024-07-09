@@ -13,7 +13,7 @@
 class KernelImageProcessing {
 public:
     const static  std::map<std::string, std::vector<std::vector<float>>> defaultMatrices;
-    explicit KernelImageProcessing(BaseImage * img) {
+    explicit KernelImageProcessing(BaseImage * img) noexcept(false) {
         if(!img){
             throw std::logic_error("Image must be initialised");
         }
