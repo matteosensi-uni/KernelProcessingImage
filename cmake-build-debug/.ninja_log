@@ -34,3 +34,14 @@
 1507	5739	7422509555157835	test/runImageTests.exe	9e1861cc13ba42bd
 29	3449	7422604333297204	test/CMakeFiles/runImageTests.dir/ImageReaderTest.cpp.obj	96f9ee1113acf7f
 3449	8159	7422604380289704	test/runImageTests.exe	9e1861cc13ba42bd
+16	577	7422609023209516	CMakeFiles/LabProg_lib.dir/ImageFileHandler.cpp.obj	86fd806d6dabb94e
+4	866	7422609026108674	CMakeFiles/LabProg.dir/main.cpp.obj	68481d4ed6f4dda2
+10	1173	7422609029127043	CMakeFiles/LabProg_lib.dir/KernelImageProcessing.cpp.obj	78314af6ed05626c
+1173	1412	7422609031535603	libLabProg_lib.a	38e0527aaca563d6
+1412	1704	7422609034363196	LabProg.exe	7613d6965375cf1b
+3	812	7422609819247067	CMakeFiles/LabProg.dir/main.cpp.obj	68481d4ed6f4dda2
+812	1025	7422609821287592	LabProg.exe	7613d6965375cf1b
+5	716	7422610433090384	CMakeFiles/LabProg.dir/main.cpp.obj	68481d4ed6f4dda2
+12	910	7422610435003490	CMakeFiles/LabProg_lib.dir/KernelImageProcessing.cpp.obj	78314af6ed05626c
+910	1055	7422610436496444	libLabProg_lib.a	38e0527aaca563d6
+1055	1236	7422610438255685	LabProg.exe	7613d6965375cf1b

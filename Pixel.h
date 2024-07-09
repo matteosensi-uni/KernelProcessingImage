@@ -47,9 +47,8 @@ public:
     }
 
     void setChannel(int i, int value) override{
-        if(i < 0 || i >= dim || value < 0){
-            if(value < 0) throw std::logic_error("Cannot set a channel with negative value");
-            else throw std::out_of_range("Index of channel out of range");
+        if(i < 0 || i >= dim ){
+            throw std::out_of_range("Index of channel out of range");
         }
         channels[i] = value;
     }

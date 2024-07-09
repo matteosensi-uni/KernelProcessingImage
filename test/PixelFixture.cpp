@@ -23,7 +23,6 @@ TEST_F(PixelFixture, SettingValue){
     EXPECT_EQ(c->getChannel(0), -1);
     EXPECT_THROW(c->getChannel(3), std::out_of_range);
     EXPECT_THROW(c->setChannel(5, 3), std::out_of_range);
-    EXPECT_THROW(c->setChannel(0, -5), std::logic_error);
 }
 
 TEST_F(PixelFixture, CopyCostr){

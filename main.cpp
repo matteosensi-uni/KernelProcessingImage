@@ -9,7 +9,7 @@ int main() {
         BaseImage *image = createImage(file);
         if (image != nullptr) {
             KernelImageProcessing kip(image);
-            BaseImage *image1 = kip.applyMethod("gaussianblur5");
+            BaseImage *image1 = kip.applyMethod("sharpen");
             ImageFileHandler file1 = ImageFileHandler("C:\\Users\\sensi\\Downloads\\prova3.ppm");
             file1.clear();
             writeImagefile(image1, file1);
