@@ -5,7 +5,7 @@
 #include "KernelImageProcessing.h"
 int main() {
     try {
-        ImageFileHandler file = ImageFileHandler("C:\\Users\\sensi\\Downloads\\pbmlib.ascii.ppm");
+        ImageFileHandler file = ImageFileHandler(R"(C:\Users\sensi\Downloads\pbmlib.ascii.ppm)");
         BaseImage *image = createImage(file);
         if (image != nullptr) {
             KernelImageProcessing kip(image);

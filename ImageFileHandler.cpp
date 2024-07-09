@@ -8,10 +8,10 @@
 ImageFileHandler::ImageFileHandler(const std::string &path) {
     file = new std::fstream();
     file->open(path);
+    this->path = path;
     if(!(*file)){
         throw std::logic_error("Path non valido");
     }
-    this->path = path;
 }
 
 std::string ImageFileHandler::getLine() const{
