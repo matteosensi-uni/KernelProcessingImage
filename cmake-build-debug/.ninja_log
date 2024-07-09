@@ -1,5 +1,5 @@
 # ninja log v5
-2	410	7422443264892187	build.ninja	a656cd4b6604f7f8
+2	410	7422453846221176	build.ninja	a656cd4b6604f7f8
 8	10055	7422316290647451	test/lib/googletest/googletest/CMakeFiles/gtest.dir/src/gtest-all.cc.obj	777c435125180cf1
 225	6820	7422203353336693	CMakeFiles/LabProg.dir/ImageFileHandler.cpp.obj	cda39246ccd32f26
 6	835	7422436610982968	CMakeFiles/LabProg_lib.dir/KernelImageProcessing.cpp.obj	78314af6ed05626c
@@ -17,9 +17,20 @@
 3	1124	7422316201577413	test/CMakeFiles/runImageTests.dir/runAllTests.cpp.obj	22701927060cd79d
 14	1153	7422316201830216	test/lib/googletest/googletest/CMakeFiles/gtest_main.dir/src/gtest_main.cc.obj	1ee1075867fc7797
 13836	13913	7422316329451038	lib/libgtest_main.a	eb0b335d3bdc699
-1280	5783	7422442944302434	test/runImageTests.exe	e91f1b8d20b3049e
+1172	5132	7422444098024712	test/runImageTests.exe	e91f1b8d20b3049e
 6	1373	7422436787919833	test/CMakeFiles/runImageTests.dir/ImageFixture.cpp.obj	647c5da5f43eea4a
 8	1210	7422434977878163	test/CMakeFiles/runImageTests.dir/PixelFixture.cpp.obj	af8201f457d0990a
-4	1280	7422442899382867	test/CMakeFiles/runImageTests.dir/ImageFileHandlerTest.cpp.obj	62093ff278cd6c1d
 4	1172	7422444058568717	test/CMakeFiles/runImageTests.dir/ImageFileHandlerTest.cpp.obj	62093ff278cd6c1d
-1172	5132	7422444098024712	test/runImageTests.exe	e91f1b8d20b3049e
+9	650	7422508366556418	CMakeFiles/LabProg_lib.dir/ImageFileHandler.cpp.obj	86fd806d6dabb94e
+651	812	7422508368152238	libLabProg_lib.a	38e0527aaca563d6
+14	1251	7422508372563277	test/CMakeFiles/runImageTests.dir/ImageFileHandlerTest.cpp.obj	62093ff278cd6c1d
+21	1449	7422508374517176	test/CMakeFiles/runImageTests.dir/ImageReaderTest.cpp.obj	96f9ee1113acf7f
+1449	5833	7422508418233708	test/runImageTests.exe	9e1861cc13ba42bd
+4	1288	7422508546943145	test/CMakeFiles/runImageTests.dir/ImageReaderTest.cpp.obj	96f9ee1113acf7f
+1288	5576	7422508589733021	test/runImageTests.exe	9e1861cc13ba42bd
+4	1407	7422509011653097	test/CMakeFiles/runImageTests.dir/ImageReaderTest.cpp.obj	96f9ee1113acf7f
+1407	5723	7422509054727246	test/runImageTests.exe	9e1861cc13ba42bd
+6	1506	7422509512955458	test/CMakeFiles/runImageTests.dir/ImageReaderTest.cpp.obj	96f9ee1113acf7f
+1507	5739	7422509555157835	test/runImageTests.exe	9e1861cc13ba42bd
+29	3449	7422604333297204	test/CMakeFiles/runImageTests.dir/ImageReaderTest.cpp.obj	96f9ee1113acf7f
+3449	8159	7422604380289704	test/runImageTests.exe	9e1861cc13ba42bd

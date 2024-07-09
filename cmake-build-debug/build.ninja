@@ -217,6 +217,13 @@ build test/CMakeFiles/runImageTests.dir/ImageFileHandlerTest.cpp.obj: CXX_COMPIL
   OBJECT_DIR = test\CMakeFiles\runImageTests.dir
   OBJECT_FILE_DIR = test\CMakeFiles\runImageTests.dir
 
+build test/CMakeFiles/runImageTests.dir/ImageReaderTest.cpp.obj: CXX_COMPILER__runImageTests_unscanned_Debug C$:/Users/sensi/CLionProjects/LabProg/test/ImageReaderTest.cpp || cmake_object_order_depends_target_runImageTests
+  DEP_FILE = test\CMakeFiles\runImageTests.dir\ImageReaderTest.cpp.obj.d
+  FLAGS = -g -fdiagnostics-color=always
+  INCLUDES = -IC:/Users/sensi/CLionProjects/LabProg/test/./lib/googletest/googletest/include -isystem C:/Users/sensi/CLionProjects/LabProg/test/lib/googletest/googletest/include -isystem C:/Users/sensi/CLionProjects/LabProg/test/lib/googletest/googletest
+  OBJECT_DIR = test\CMakeFiles\runImageTests.dir
+  OBJECT_FILE_DIR = test\CMakeFiles\runImageTests.dir
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target runImageTests
@@ -225,7 +232,7 @@ build test/CMakeFiles/runImageTests.dir/ImageFileHandlerTest.cpp.obj: CXX_COMPIL
 #############################################
 # Link the executable test\runImageTests.exe
 
-build test/runImageTests.exe: CXX_EXECUTABLE_LINKER__runImageTests_Debug test/CMakeFiles/runImageTests.dir/runAllTests.cpp.obj test/CMakeFiles/runImageTests.dir/ImageFixture.cpp.obj test/CMakeFiles/runImageTests.dir/PixelFixture.cpp.obj test/CMakeFiles/runImageTests.dir/ImageFileHandlerTest.cpp.obj | lib/libgtest.a lib/libgtest_main.a libLabProg_lib.a lib/libgtest.a || libLabProg_lib.a lib/libgtest.a lib/libgtest_main.a
+build test/runImageTests.exe: CXX_EXECUTABLE_LINKER__runImageTests_Debug test/CMakeFiles/runImageTests.dir/runAllTests.cpp.obj test/CMakeFiles/runImageTests.dir/ImageFixture.cpp.obj test/CMakeFiles/runImageTests.dir/PixelFixture.cpp.obj test/CMakeFiles/runImageTests.dir/ImageFileHandlerTest.cpp.obj test/CMakeFiles/runImageTests.dir/ImageReaderTest.cpp.obj | lib/libgtest.a lib/libgtest_main.a libLabProg_lib.a lib/libgtest.a || libLabProg_lib.a lib/libgtest.a lib/libgtest_main.a
   FLAGS = -g
   LINK_LIBRARIES = lib/libgtest.a  lib/libgtest_main.a  libLabProg_lib.a  lib/libgtest.a  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = test\CMakeFiles\runImageTests.dir
