@@ -109,6 +109,10 @@ BaseImage * createImage(ImageFileHandler& file){
 }
 
 void writeImagefile(BaseImage * image, ImageFileHandler& fileHandler){
+    if(image->getFormat() == "P2" && split(fileHandler.getPath(), ".").back() != "pgm")
+        throw std::logic_error("Writing file must be a pgm file");
+    if(image->getFormat() == "P3" && split(fileHandler.getPath(), ".").back() != "ppm")
+        throw std::logic_error("Writing file must be a ppm file");
     fileHandler.write(image->getFormat() + "\n" + std::to_string(image->getWidth())+" "+std::to_string(image->getHeight())+"\n"+std::to_string(image->getMaxValue())+"\n");
     for(int i = 0; i < image->getHeight(); i++){
         for(int j = 0; j < image->getWidth(); j++){

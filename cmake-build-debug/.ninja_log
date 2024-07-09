@@ -45,3 +45,12 @@
 12	910	7422610435003490	CMakeFiles/LabProg_lib.dir/KernelImageProcessing.cpp.obj	78314af6ed05626c
 910	1055	7422610436496444	libLabProg_lib.a	38e0527aaca563d6
 1055	1236	7422610438255685	LabProg.exe	7613d6965375cf1b
+8	513	7422616371660587	CMakeFiles/LabProg_lib.dir/ImageFileHandler.cpp.obj	86fd806d6dabb94e
+3	800	7422616374526668	CMakeFiles/LabProg.dir/main.cpp.obj	68481d4ed6f4dda2
+16	960	7422616376113037	CMakeFiles/LabProg_lib.dir/KernelImageProcessing.cpp.obj	78314af6ed05626c
+961	1122	7422616377734127	libLabProg_lib.a	38e0527aaca563d6
+1122	1376	7422616380133134	LabProg.exe	7613d6965375cf1b
+6	765	7422616507839453	CMakeFiles/LabProg.dir/main.cpp.obj	68481d4ed6f4dda2
+766	979	7422616509900384	LabProg.exe	7613d6965375cf1b
+4	773	7422616610498191	CMakeFiles/LabProg.dir/main.cpp.obj	68481d4ed6f4dda2
+774	991	7422616612614343	LabProg.exe	7613d6965375cf1b
