@@ -13,4 +13,13 @@ TEST(ImageFileReaderWriter, ReadingEmptyFile){
     ImageFileHandler file1(R"(C:\Users\sensi\CLionProjects\LabProg\test\validFile.ppm)");
     img = createImage(file1);
     EXPECT_TRUE(img);
+    delete img;
+}
+
+TEST(ImageFileReaderWriter, WritingOnInvalidFile){
+    ImageFileHandler file(R"(C:\Users\sensi\CLionProjects\LabProg\test\fileVuoto.pgm)");
+    ImageFileHandler file1(R"(C:\Users\sensi\CLionProjects\LabProg\test\validFile.ppm)");
+    BaseImage * img = createImage(file1);
+    EXPECT_THROW(writeImagefile(img, file), std::logic_error);
+    delete img;
 }
