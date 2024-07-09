@@ -5,12 +5,20 @@
 #include "KernelImageProcessing.h"
 int main() {
     try {
-        ImageFileHandler file = ImageFileHandler(R"(C:\Users\sensi\Downloads\pbmlib.ascii.ppm)");
+        std::string input;
+        std::cout<<"Inserisci il path dell'immagine da modificare:"<<std::endl;
+        std::cin>>input;
+        ImageFileHandler file = ImageFileHandler(input);
         BaseImage *image = createImage(file);
         if (image != nullptr) {
             KernelImageProcessing kip(image);
-            BaseImage *image1 = kip.applyMethod("sharpen");
-            ImageFileHandler file1 = ImageFileHandler("C:\\Users\\sensi\\Downloads\\prova3.ppm");
+            std::cout<<"Scegli il metodo con cui modificare l'immagine: \n"
+                       "(identity) (sharpen) (boxblur) (ridge) (gaussianblur3) (gaussianblur5) (unsharpmasking): "<<std::endl;
+            std::cin>>input;
+            BaseImage *image1 = kip.applyMethod(input);
+            std::cout<<"Inserisci il path dell'immagine da sovrascrivere:"<<std::endl;
+            std::cin>>input;
+            ImageFileHandler file1 = ImageFileHandler(input);
             file1.clear();
             writeImagefile(image1, file1);
             std::cout<<"File sovrascritto correttamente"<<std::endl;

@@ -12,7 +12,7 @@ const std::map<std::string, std::vector<std::vector<float>>> KernelImageProcessi
                     {1.0/9,1.0/9,1.0/9},
                     {1.0/9,1.0/9,1.0/9}
             }},
-        {"gaussinblur3", {
+        {"gaussianblur3", {
                 {0.0625,0.125,0.0625},
                 {0.1250,0.250,0.1250},
                 {0.0625,0.125,0.0625}
