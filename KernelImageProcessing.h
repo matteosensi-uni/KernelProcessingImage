@@ -22,12 +22,10 @@ public:
                 if(img->getPixel(i, j)){
                     for(int k = 0; k < img->getPixel(i, j)->getDim(); k++){
                         if(img->getPixel(i, j)->getChannel(k) < 0){
-                            delete img;
                             throw std::logic_error("Each pixel of the image must be initialised");
                         }
                     }
                 }else{
-                    delete img;
                     throw std::logic_error("Each pixel of the image must be initialised");
                 }
             }

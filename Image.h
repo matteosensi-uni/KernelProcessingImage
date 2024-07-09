@@ -89,7 +89,9 @@ public:
 
     void setMaxValue(int maxValue) noexcept(false) override {
         if(maxValue> 0) max_value = maxValue;
-        else throw std::logic_error("Max value can't be negative");
+        else{
+            throw std::logic_error("Max value can't be negative");
+        }
     }
 
     std::string getFormat() override{
