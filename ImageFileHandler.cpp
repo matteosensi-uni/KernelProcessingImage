@@ -12,6 +12,7 @@ ImageFileHandler::ImageFileHandler(const std::string &path) {
     if(!(*file)){
         throw std::logic_error("Path non valido");
     }
+    closed = false;
 }
 
 std::string ImageFileHandler::getLine() const{
@@ -25,7 +26,7 @@ void ImageFileHandler::resetIndex() const {
 }
 
 ImageFileHandler::~ImageFileHandler(){
-    file->close();
+    if(!closed) file->close();
 }
 
 bool ImageFileHandler::eof() const{

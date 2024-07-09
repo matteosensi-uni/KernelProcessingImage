@@ -27,9 +27,14 @@ public:
         ofs.open(path, std::ofstream::out | std::ofstream::trunc);
         ofs.close();
     }
+    void close(){
+        file->close();
+        closed = true;
+    }
 private:
     std::fstream* file;
     std::string path;
+    bool closed;
 };
 
 
