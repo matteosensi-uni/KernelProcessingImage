@@ -14,6 +14,7 @@ class KernelImageProcessing {
 public:
     const static  std::map<std::string, std::vector<std::vector<float>>> defaultMatrices;
     explicit KernelImageProcessing(BaseImage * img) noexcept(false) {
+        //checking if the given image is valid
         if(!img){
             throw std::logic_error("Image must be initialised");
         }

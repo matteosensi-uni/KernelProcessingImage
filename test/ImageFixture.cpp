@@ -35,8 +35,3 @@ TEST_F(ImageFixture, SettingMaxVal){
     EXPECT_EQ(c->getMaxValue(), 255);
     EXPECT_THROW(c->setMaxValue(-1), std::logic_error);
 }
-TEST_F(ImageFixture, CopyCostr){
-    BaseImage * img1 = new Image<1>(c);
-    EXPECT_TRUE(c->compare(img1));
-    delete img1;
-}

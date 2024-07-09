@@ -8,6 +8,7 @@
 #include "BasePixel.h"
 #include <string>
 
+//abstract class for handling different types of images
 class BaseImage {
 public:
     virtual void setPixel(BasePixel* p, int i, int j) = 0;

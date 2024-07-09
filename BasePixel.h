@@ -5,6 +5,7 @@
 #ifndef LABPROG_BASEPIXEL_H
 #define LABPROG_BASEPIXEL_H
 
+//abstract class for handling different types of images
 class BasePixel{
 public:
     virtual int getChannel(int i) const = 0;

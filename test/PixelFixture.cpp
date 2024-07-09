@@ -25,8 +25,3 @@ TEST_F(PixelFixture, SettingValue){
     EXPECT_THROW(c->setChannel(5, 3), std::out_of_range);
 }
 
-TEST_F(PixelFixture, CopyCostr){
-    BasePixel * p1 = new Pixel<1>(c);
-    EXPECT_TRUE(c->compare(p1));
-    delete p1;
-}

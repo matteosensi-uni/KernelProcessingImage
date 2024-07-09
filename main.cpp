@@ -16,14 +16,18 @@ int main() {
                        "(identity) (sharpen) (boxblur) (ridge) (gaussianblur3) (gaussianblur5) (unsharpmasking): "<<std::endl;
             std::cin>>input;
             BaseImage *image1 = kip.applyMethod(input);
-            std::cout<<"Inserisci il path dell'immagine da sovrascrivere:"<<std::endl;
-            std::cin>>input;
-            ImageFileHandler file1 = ImageFileHandler(input);
-            file1.clear();
-            writeImagefile(image1, file1);
-            std::cout<<"File sovrascritto correttamente"<<std::endl;
+            if(image1) {
+                std::cout << "Inserisci il path dell'immagine da sovrascrivere:" << std::endl;
+                std::cin >> input;
+                ImageFileHandler file1 = ImageFileHandler(input);
+                file1.clear();
+                writeImagefile(image1, file1);
+                std::cout << "File sovrascritto correttamente" << std::endl;
+            }else{
+                std::cout << "Metodo scelto non valido"<<std::endl;
+            }
         } else {
-            std::cout << "Errore nella lettura del file";
+            std::cout << "Errore nella lettura del file"<<std::endl;
         }
     }catch (std::logic_error e){
         std::cout<<e.what()<<std::endl;

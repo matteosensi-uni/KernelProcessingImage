@@ -7,8 +7,8 @@
 #include "../ImageFileHandler.h"
 
 TEST(ImageFileHandler, OpeningFile){
-    EXPECT_THROW(ImageFileHandler file("prova"), std::logic_error);
-    auto * file = new ImageFileHandler(R"(C:\Users\sensi\Downloads\pbmlib.ascii.ppm)");
-    EXPECT_TRUE(file);
+    EXPECT_THROW(ImageFileHandler file("prova"), std::logic_error); //test for not valid file
+    auto * file = new ImageFileHandler(R"(C:\Users\sensi\CLionProjects\LabProg\test\fileVuoto.pgm)");
+    EXPECT_TRUE(file); //test for valid file
     delete file;
 }

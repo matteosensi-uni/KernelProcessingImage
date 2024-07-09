@@ -22,7 +22,7 @@ public:
         (*file)<<line;
     }
     void write(const std::string& string){ (*file)<<string; }
-    void clear(){
+    void clear(){//clears all the content of an existing file
         std::ofstream ofs;
         ofs.open(path, std::ofstream::out | std::ofstream::trunc);
         ofs.close();

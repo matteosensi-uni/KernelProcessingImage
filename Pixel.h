@@ -14,6 +14,7 @@ public:
     Pixel(){
         dim =N;
         channels = new int[dim];
+        //setting all the channles to negative numbers
         for(int i = 0; i < dim; i++){
             channels[i] = -1;
         }
@@ -26,7 +27,7 @@ public:
             channels[i] = p->getChannel(i);
         }
     }
-    bool compare(BasePixel * p) override{
+    bool compare(BasePixel * p) override{ //checks if two pixels are equal
         if(this->dim == p->getDim()){
             for(int i = 0; i < dim; i++){
                 if(p->getChannel(i) != this->getChannel(i)) return false;
@@ -36,17 +37,17 @@ public:
         return false;
     }
 
-    ~Pixel() override{
+    ~Pixel() override{//cleaning memory used
         delete[] channels;
     }
 
-    int getChannel(int i) const noexcept(false) override{
+    int getChannel(int i) const noexcept(false) override{//this method throws an exception if the given index isnt valid
         if(i >= 0 && i < dim)
             return channels[i];
         else throw std::out_of_range("Index of channel out of range");
     }
 
-    void setChannel(int i, int value) noexcept(false) override{
+    void setChannel(int i, int value) noexcept(false) override{//this method throws an exception if the given index isnt valid
         if(i < 0 || i >= dim ){
             throw std::out_of_range("Index of channel out of range");
         }

@@ -7,10 +7,15 @@
 
 #include "Image.h"
 
+//method that split a string into a vector based on a delimiter given
+/*
+ * EX: input: string:"c.ia.a.a" delimiter: '.'
+ *     output: std::vector<string>: ["c", "ia", "a", "a"]
+ * */
 std::vector<std::string> split(const std::string& s, const std::string& delimiter) {
     size_t start = 0, end, delim_len = delimiter.length();
-    std::string token;
-    std::vector<std::string> res;
+    std::string token; //element of the vector
+    std::vector<std::string> res; // output vector
 
     while ((end = s.find(delimiter, start)) != std::string::npos) {
         token = s.substr (start, end - start);
@@ -22,6 +27,7 @@ std::vector<std::string> split(const std::string& s, const std::string& delimite
     return res;
 }
 
+//creates a 3-channel/1-channel image based on the content of the given file
 BaseImage * createImage(ImageFileHandler& file){
     int h, w;
     int max_value;
@@ -29,16 +35,16 @@ BaseImage * createImage(ImageFileHandler& file){
     BaseImage * image;
     std::string format;
     std::vector<std::string> splitString;
-    do{
+    do{//reads the format
         line = file.getLine();
     }while(line != "P2" && line != "P3" && !file.eof());
     if(!file.eof()){
         format = line;
         do {
             line = file.getLine();
-            if (line.empty()) continue;
-        } while (line[0] == '#' && !file.eof());
+        } while (line[0] == '#' || line.empty() || line == " " && !file.eof());//skips comments and empty lines
         splitString = split(line, " ");
+        //reads width and height
         for(int i = 0, j = 0; i < splitString.size() && j < 2; i++){
             if(!splitString[i].empty() && splitString[i]!=" " && j == 0){
                 w = std::stoi(splitString[i]);
@@ -50,19 +56,19 @@ BaseImage * createImage(ImageFileHandler& file){
         }
         do {
             line = file.getLine();
-            if (line.empty()) continue;
-        } while (line[0] == '#' && !file.eof());
-        max_value = std::stoi(line);
+        } while (line[0] == '#' || line.empty() || line == " " && !file.eof());//skips comments and empty lines
+        max_value = std::stoi(line); //reads maxval
         if(format == "P2") image = new Image<1>(w, h, max_value, format);
         else image = new Image<3>(w, h, max_value, format);
         int i = 0, j = 0;
         std::vector<int> pixels;
+        //reading pixels
         while (!file.eof()) {
             line = file.getLine();
             if (!line.empty() && line[0] != '#') {
                 splitString = split(line, " ");
                 if(format == "P2"){
-                    for (auto &el: splitString) {
+                    for (auto &el: splitString) { //reads 1 channel for every pixel
                         if (!el.empty() && el != " "){
                             auto * pixel = new Pixel<1>();
                             pixel->setChannel(0, std::stoi(el));
@@ -71,7 +77,7 @@ BaseImage * createImage(ImageFileHandler& file){
                         }
                     }
                 }else {
-                    for (auto &el: splitString) {
+                    for (auto &el: splitString) { //reads 3 channels for every pixel
                         if (!el.empty() && el != " ") {
                             pixels.push_back(std::stoi(el));
                             j++;
@@ -91,6 +97,7 @@ BaseImage * createImage(ImageFileHandler& file){
             }
         }
         file.resetIndex();
+        //checks if all the pixels are initialised
         for(int k = 0; i < image->getHeight(); i++){
             for(int s = 0; j < image->getWidth(); j++){
                 if(image->getPixel(k, s) == nullptr) return nullptr;
@@ -109,6 +116,7 @@ BaseImage * createImage(ImageFileHandler& file){
 }
 
 void writeImagefile(BaseImage * image, ImageFileHandler& fileHandler) noexcept(false){
+    //checks if either the format of the file modified and image are equal
     if(image->getFormat() == "P2" && split(fileHandler.getPath(), ".").back() != "pgm")
         throw std::logic_error("Writing file must be a pgm file");
     if(image->getFormat() == "P3" && split(fileHandler.getPath(), ".").back() != "ppm")

@@ -4,6 +4,7 @@
 
 #include "KernelImageProcessing.h"
 
+//initialising all the default matrices for modifying the image
 const std::map<std::string, std::vector<std::vector<float>>> KernelImageProcessing::defaultMatrices = {
         {"identity", {{0,0,0},{0,1,0},{0,0,0}}},
         {"ridge", {{0,-1,0},{-1,4,-1},{0,-1,0}}},
@@ -32,6 +33,7 @@ const std::map<std::string, std::vector<std::vector<float>>> KernelImageProcessi
         }}
 };
 
+//method that calculates the result pixel based on the matrix selected
 int KernelImageProcessing::convolution(std::vector<std::vector<float>> kernel_matrix, int i , int j, int c){
     int sum = 0;
     int dim = (int)kernel_matrix.size();
@@ -68,66 +70,72 @@ BaseImage * KernelImageProcessing::applyMethod(std::string method_name){
     for(auto& c: method_name){
         c = (char)tolower(c);
     }
-    matrix_selected = (static_cast<std::map<std::string, std::vector<std::vector<float>>>>(defaultMatrices))[method_name];
-    BaseImage * image1, *tmp;
-    if(image->getFormat() == "P3" && method_name == "ridge") {
-        image1 = Image<3>::rgbtogray(dynamic_cast<Image<3>*>(image));
-        tmp = image;
-        image = new Image<1>(image1);
-    }else {
-        if(image->getFormat() == "P2"){
-            image1 = new Image<1>(image);
-        }else{
-            image1 = new Image<3>(image);
-        }
-    }
-    for(int i = 0; i < image1->getHeight(); i++){
-        for(int j = 0; j < image1->getWidth(); j++){
-            for (int k = 0; k < image1->getPixel(i, j)->getDim(); k++) {
-                int val = convolution(matrix_selected, i, j, k);
-                image1->getPixel(i, j)->setChannel(k, val);
+    if(defaultMatrices.find(method_name) != defaultMatrices.end()) { //cechs if the method selected is correct
+        matrix_selected = (static_cast<std::map<std::string, std::vector<std::vector<float>>>>(defaultMatrices))[method_name];
+        BaseImage *image1, *tmp;
+        if (image->getFormat() == "P3" && method_name == "ridge") {
+            image1 = Image<3>::rgbtogray(dynamic_cast<Image<3> *>(image));
+            tmp = image;
+            image = new Image<1>(image1);
+        } else {
+            if (image->getFormat() == "P2") {
+                image1 = new Image<1>(image);
+            } else {
+                image1 = new Image<3>(image);
             }
         }
-    }
-    max = image1->getPixel(0, 0)->getChannel(0);
-    min = image1->getPixel(0, 0)->getChannel(0);
-    for(int i = 0; i < image1->getHeight(); i++){
-        for(int j = 0; j < image1->getWidth(); j++){
-            for (int k = 0; k < image1->getPixel(i, j)->getDim(); k++) {
-                int val = image1->getPixel(i, j)->getChannel(k);
-                if(max < val) max = val;
-                if(min > val) min = val;
-            }
-        }
-    }
-    if(min < 0){
-        max = max - min;
-
-        for(int i = 0; i < image1->getHeight(); i++){
-            for(int j = 0; j < image1->getWidth(); j++){
+        for (int i = 0; i < image1->getHeight(); i++) {
+            for (int j = 0; j < image1->getWidth(); j++) {
                 for (int k = 0; k < image1->getPixel(i, j)->getDim(); k++) {
-                    int val = image1->getPixel(i, j)->getChannel(k);
-                    if(image1->getFormat() == "P2"){
-                        val = (val < 0)? 0: (max > 65.535)? (int)(((1.0*(val-min))/max)*65.535): val;
-                    }else{
-                        val = (val < 0)? 0: (max > 255)? ((val-min)*255)/max: val;
-                    }
+                    int val = convolution(matrix_selected, i, j, k);
                     image1->getPixel(i, j)->setChannel(k, val);
                 }
             }
-
         }
-        if(image1->getFormat() == "P2"){
-            if(max > 65535) max = 65535;
-        }else{
-            if(max>255) max = 255;
+        //checking if there are negative pixels
+        max = image1->getPixel(0, 0)->getChannel(0);
+        min = image1->getPixel(0, 0)->getChannel(0);
+        for (int i = 0; i < image1->getHeight(); i++) {
+            for (int j = 0; j < image1->getWidth(); j++) {
+                for (int k = 0; k < image1->getPixel(i, j)->getDim(); k++) {
+                    int val = image1->getPixel(i, j)->getChannel(k);
+                    if (max < val) max = val;
+                    if (min > val) min = val;
+                }
+            }
         }
-        image1->setMaxValue(max);
-    }
+        if (min < 0) { //if there are some negative pixels all the pixels will be proportionally set positive
+                       //also check if the max is over the limit of the format, in that case all the pixels will be formatted properly
+            max = max - min;
+            for (int i = 0; i < image1->getHeight(); i++) {
+                for (int j = 0; j < image1->getWidth(); j++) {
+                    for (int k = 0; k < image1->getPixel(i, j)->getDim(); k++) {
+                        int val = image1->getPixel(i, j)->getChannel(k);
+                        if (image1->getFormat() == "P2") {
+                            val = (val < 0) ? 0 : (max > 65.535) ? (int) (((1.0 * (val - min)) / max) * 65.535) : val;
+                        } else {
+                            val = (val < 0) ? 0 : (max > 255) ? ((val - min) * 255) / max : val;
+                        }
+                        image1->getPixel(i, j)->setChannel(k, val);
+                    }
+                }
 
-    if(image->getFormat() == "P3" && method_name == "ridge") {
-        delete image;
-        image = tmp;
+            }
+            //resetting the maxval of the image
+            if (image1->getFormat() == "P2") {
+                if (max > 65535) max = 65535;
+            } else {
+                if (max > 255) max = 255;
+            }
+            image1->setMaxValue(max);
+        }
+
+        if (image->getFormat() == "P3" && method_name == "ridge") {
+            delete image;
+            image = tmp;
+        }
+        return image1;
+    }else{
+        return nullptr;
     }
-    return image1;
 }

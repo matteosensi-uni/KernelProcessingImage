@@ -11,10 +11,12 @@
 #include "Pixel.h"
 #include "BaseImage.h"
 
+//template class image used for rapresenting different type of images based on number of channels
 template<int N>
 class Image: public BaseImage{
 public:
     Image(int w, int h, int max, const std::string& format): height(h), width(w), max_value(max), format(format){
+        //Allocating space for the image and setting every pixel
         image = new Pixel<N>**[h];
         for(int i = 0; i < h; i++){
             image[i] = new Pixel<N>*[w];
@@ -25,6 +27,7 @@ public:
     }
 
     bool compare(BaseImage * img) override{
+        //method that return true if either the classes are equal
         if(img!= nullptr) {
             for (int i = 0; i < height; i++) {
                 for (int j = 0; j < width; ++j) {
@@ -36,6 +39,7 @@ public:
         }else return false;
     }
 
+    //copy constructor
     explicit Image(BaseImage * img): height(img->getHeight()), width(img->getWidth()), max_value(img->getMaxValue()), format(img->getFormat()){
         image = new Pixel<N>**[height];
         for(int i = 0; i < height; i++){
@@ -51,14 +55,14 @@ public:
     }
 
     void setPixel(BasePixel* p, int i, int j) noexcept(false) override{
-        if(i >= height || i < 0 || j < 0 || j >= width){
+        if(i >= height || i < 0 || j < 0 || j >= width){ //if given indexes are wrong this method throws an exception
             throw std::out_of_range("Pixel out of range");
         }else{
             image[i][j] = dynamic_cast<Pixel<N>*>(p);
         }
     }
 
-    BasePixel* getPixel(int i, int j) const noexcept(false) override{
+    BasePixel* getPixel(int i, int j) const noexcept(false) override{//if given indexes are wrong this method throws an exception
         if(i >= height || i < 0 || j < 0 || j >= width) {
             throw std::out_of_range("Pixel out of range");
         }
@@ -71,7 +75,7 @@ public:
 
     void setHeight(int h) noexcept(false) override {
         if(h > 0) height = h;
-        else throw std::logic_error("Height can't be negative or zero");
+        else throw std::logic_error("Height can't be negative or zero"); //if given height is wrong this method throws an exception
     }
 
     int getWidth() const override {
@@ -80,7 +84,7 @@ public:
 
     void setWidth(int w) noexcept(false) override {
         if(w> 0) width = w;
-        else throw std::logic_error("Width can't be negative");
+        else throw std::logic_error("Width can't be negative"); //if given width is wrong this method throws an exception
     }
 
     int getMaxValue() const override {
@@ -90,7 +94,7 @@ public:
     void setMaxValue(int maxValue) noexcept(false) override {
         if(maxValue> 0) max_value = maxValue;
         else{
-            throw std::logic_error("Max value can't be negative");
+            throw std::logic_error("Max value can't be negative"); //if given MaxVal is wrong this method throws an exception
         }
     }
 
@@ -101,7 +105,7 @@ public:
         format = value;
     }
 
-    ~Image() override{
+    ~Image() override{ // cleaning memory from used space
         for(int i = 0; i < height; i++){
             for(int j = 0; j < width; j++){
                 if(image[i][j]!= nullptr)
@@ -112,7 +116,7 @@ public:
         delete image;
     }
 
-    static Image<1> * rgbtogray(Image<3> * img){
+    static Image<1> * rgbtogray(Image<3> * img){ //method that transform a rgb image (3 channels) to a gray scale image (1 channel) based on the NTSC formula
         std::vector<float> rgb2gray = {0.3, 0.59, 0.11};
         auto image1 = new Image<1>(img->getWidth(), img->getHeight(), img->getMaxValue(), "P2");
         for(int i = 0; i < img->getHeight(); i++) {

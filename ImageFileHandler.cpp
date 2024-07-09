@@ -9,7 +9,7 @@ ImageFileHandler::ImageFileHandler(const std::string &path) {
     file = new std::fstream();
     file->open(path);
     this->path = path;
-    if(!(*file)){
+    if(!(*file)){ //if the file wont open this method throws an exception
         throw std::logic_error("Path non valido");
     }
     closed = false;
@@ -21,14 +21,15 @@ std::string ImageFileHandler::getLine() const{
     return line;
 }
 
-void ImageFileHandler::resetIndex() const {
+void ImageFileHandler::resetIndex() const { //this method resets the reading/writing index to the first char of the file
     file->seekg(0);
 }
 
 ImageFileHandler::~ImageFileHandler(){
     if(!closed) file->close();
+    delete file;
 }
 
-bool ImageFileHandler::eof() const{
+bool ImageFileHandler::eof() const{ //checks if the reading/writing index is at the end of file
     return file->eof();
 }
