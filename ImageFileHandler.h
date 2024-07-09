@@ -31,6 +31,7 @@ public:
         file->close();
         closed = true;
     }
+    const std::string&  getPath() const {return path;}
 private:
     std::fstream* file;
     std::string path;
