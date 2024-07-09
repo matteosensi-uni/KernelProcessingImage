@@ -2,15 +2,41 @@
 
 #include "../Image.h"
 
-
-class ImageSuite : public ::testing::Test {
+//classe Fixture per testare la classe Image
+class ImageFixture : public ::testing::Test {
 
 protected:
-    virtual void SetUp() {
-        c = new Image<1>(100, 100, 255, "P2");
-
+    void SetUp() override {
     }
+    void TearDown() override{
+        delete c;
+    }
+    BaseImage *c = new Image<1>(100, 100, 255, "P2");
 
-    BaseImage* c = nullptr;  // XXX C++11 standard initialization
 };
 
+TEST_F(ImageFixture, SettingHeight){
+    EXPECT_EQ(c->getHeight(), 100);
+    EXPECT_THROW(c->setHeight(-100), std::logic_error);
+}
+
+TEST_F(ImageFixture, SettingWidth){
+    EXPECT_EQ(c->getWidth(), 100);
+    EXPECT_THROW(c->setWidth(-100), std::logic_error);
+}
+
+TEST_F(ImageFixture, SettingPixel){
+    EXPECT_TRUE(c->getPixel(0,0));
+    EXPECT_THROW(c->getPixel(100, 100), std::out_of_range);
+    EXPECT_THROW(c->setPixel(new Pixel<1>, 10, -1), std::out_of_range);
+}
+
+TEST_F(ImageFixture, SettingMaxVal){
+    EXPECT_EQ(c->getMaxValue(), 255);
+    EXPECT_THROW(c->setMaxValue(-1), std::logic_error);
+}
+TEST_F(ImageFixture, CopyCostr){
+    BaseImage * img1 = new Image<1>(c);
+    EXPECT_TRUE(c->compare(img1));
+    delete img1;
+}

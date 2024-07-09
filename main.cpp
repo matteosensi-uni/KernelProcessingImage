@@ -19,6 +19,8 @@ int main() {
         }
     }catch (std::logic_error e){
         std::cout<<e.what()<<std::endl;
+    }catch (std::out_of_range e1){
+        std::cout<<e1.what()<<std::endl;
     }
     return 0;
 }

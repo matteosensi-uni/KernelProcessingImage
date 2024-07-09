@@ -19,7 +19,7 @@ public:
         for(int i = 0; i < h; i++){
             image[i] = new Pixel<N>*[w];
             for(int j = 0; j < w; j++){
-                image[i][j] = nullptr;
+                image[i][j] = new Pixel<N>;
             }
         }
     }
@@ -71,7 +71,7 @@ public:
 
     void setHeight(int h) override {
         if(h > 0) height = h;
-        else throw std::logic_error("Height can't be negative");
+        else throw std::logic_error("Height can't be negative or zero");
     }
 
     int getWidth() const override {
@@ -102,7 +102,8 @@ public:
     ~Image() override{
         for(int i = 0; i < height; i++){
             for(int j = 0; j < width; j++){
-                delete image[i][j];
+                if(image[i][j]!= nullptr)
+                    delete image[i][j];
             }
             delete image[i];
         }

@@ -11,6 +11,7 @@ public:
     virtual void setChannel(int i, int value) = 0;
     virtual int getDim() const = 0;
     virtual bool compare(BasePixel * p) = 0;
+    virtual ~BasePixel() {};
 
 };
 #endif //LABPROG_BASEPIXEL_H
