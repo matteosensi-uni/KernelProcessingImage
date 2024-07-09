@@ -10,5 +10,7 @@ add_executable(runImageTests runAllTests.cpp
         ImageFixture.cpp
         PixelFixture.cpp
         ImageFileHandlerTest.cpp
-        ImageReaderWriterTest.cpp)
+        ImageReaderWriterTest.cpp
+        KIPTest.cpp
+)
 target_link_libraries(runImageTests gtest gtest_main ${CMAKE_PROJECT_NAME}_lib)
