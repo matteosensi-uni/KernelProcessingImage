@@ -127,6 +127,8 @@ void writeImagefile(BaseImage * image, ImageFileHandler& fileHandler) noexcept(f
             for (int k = 0; k < image->getPixel(i, j)->getDim(); k++) {
                 if(image->getPixel(i, j) == nullptr){
                     throw std::logic_error("Given image isn't valid, some pixel aren't initialized");
+                }else if(image->getPixel(i, j)->getChannel(k) == -1){
+                    throw std::logic_error("Given image isn't valid, some pixel aren't initialized");
                 }
                 fileHandler.write(std::to_string(image->getPixel(i, j)->getChannel(k))+" ");
             }
