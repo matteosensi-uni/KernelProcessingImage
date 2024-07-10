@@ -122,18 +122,25 @@ void writeImagefile(BaseImage * image, ImageFileHandler& fileHandler) noexcept(f
     if(image->getFormat() == "P3" && split(fileHandler.getPath(), ".").back() != "ppm")
         throw std::logic_error("Writing file must be a ppm file");
     fileHandler.write(image->getFormat() + "\n" + std::to_string(image->getWidth())+" "+std::to_string(image->getHeight())+"\n"+std::to_string(image->getMaxValue())+"\n");
+    int lineLength = 0;
     for(int i = 0; i < image->getHeight(); i++){
         for(int j = 0; j < image->getWidth(); j++){
-            for (int k = 0; k < image->getPixel(i, j)->getDim(); k++) {
+            for(int k = 0; k < image->getPixel(i, j)->getDim(); k++) {
                 if(image->getPixel(i, j) == nullptr){
                     throw std::logic_error("Given image isn't valid, some pixel aren't initialized");
                 }else if(image->getPixel(i, j)->getChannel(k) == -1){
                     throw std::logic_error("Given image isn't valid, some pixel aren't initialized");
                 }
-                fileHandler.write(std::to_string(image->getPixel(i, j)->getChannel(k))+" ");
+                std::string value = std::to_string(image->getPixel(i, j)->getChannel(k)) + " ";
+                if(lineLength + static_cast<int>(value.length()) > 70){
+                    fileHandler.write("\n");
+                    lineLength = static_cast<int>(value.length());
+                }else{
+                    lineLength += static_cast<int>(value.length());
+                }
+                fileHandler.write(value);
             }
         }
-        fileHandler.write("\n");
     }
 }
 
