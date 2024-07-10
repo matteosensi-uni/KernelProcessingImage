@@ -117,7 +117,7 @@ public:
     }
 
     static Image<1> * rgbtogray(Image<3> * img){ //method that transform a rgb image (3 channels) to a gray scale image (1 channel) based on the NTSC formula
-        std::vector<float> rgb2gray = {0.3, 0.59, 0.11};
+        std::vector<float> rgb2gray = {0.299, 0.587, 0.114};
         auto image1 = new Image<1>(img->getWidth(), img->getHeight(), img->getMaxValue(), "P2");
         for(int i = 0; i < img->getHeight(); i++) {
             for (int j = 0; j < img->getWidth(); j++) {

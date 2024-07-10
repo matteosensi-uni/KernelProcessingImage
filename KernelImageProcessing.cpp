@@ -64,17 +64,15 @@ int KernelImageProcessing::convolution(std::vector<std::vector<float>> kernel_ma
 }
 
 BaseImage * KernelImageProcessing::applyMethod(std::string method_name){
-    int max;
-    int min;
     std::vector<std::vector<float>> matrix_selected;
     for(auto& c: method_name){
         c = (char)tolower(c);
     }
     if(defaultMatrices.find(method_name) != defaultMatrices.end()) { //cechs if the method selected is correct
         matrix_selected = (static_cast<std::map<std::string, std::vector<std::vector<float>>>>(defaultMatrices))[method_name];
-        BaseImage *image1, *tmp;
+        BaseImage *image1, *tmp = nullptr;
         if (image->getFormat() == "P3" && method_name == "ridge") {
-            image1 = Image<3>::rgbtogray(dynamic_cast<Image<3> *>(image));
+            image1 = Image<1>::rgbtogray(dynamic_cast<Image<3> *>(image));
             tmp = image;
             image = new Image<1>(image1);
         } else {
@@ -92,45 +90,44 @@ BaseImage * KernelImageProcessing::applyMethod(std::string method_name){
                 }
             }
         }
-        //checking if there are negative pixels
-        max = image1->getPixel(0, 0)->getChannel(0);
-        min = image1->getPixel(0, 0)->getChannel(0);
+        //pixel normalization
+        //calculating max and min intensity of each pixel of the modified image
+        int newMax = image1->getPixel(0, 0)->getChannel(0);
+        int newMin = image1->getPixel(0, 0)->getChannel(0);
         for (int i = 0; i < image1->getHeight(); i++) {
             for (int j = 0; j < image1->getWidth(); j++) {
                 for (int k = 0; k < image1->getPixel(i, j)->getDim(); k++) {
                     int val = image1->getPixel(i, j)->getChannel(k);
+                    if (newMax < val) newMax = val;
+                    if (newMin > val) newMin = val;
+                }
+            }
+        }
+        //calculating max and min intensity of each pixel of the base image
+        int max = image->getPixel(0, 0)->getChannel(0);
+        int min = image->getPixel(0, 0)->getChannel(0);
+        for (int i = 0; i < image->getHeight(); i++) {
+            for (int j = 0; j < image->getWidth(); j++) {
+                for (int k = 0; k < image->getPixel(i, j)->getDim(); k++) {
+                    int val = image->getPixel(i, j)->getChannel(k);
                     if (max < val) max = val;
                     if (min > val) min = val;
                 }
             }
         }
-        if (min < 0) { //if there are some negative pixels all the pixels will be proportionally set positive
-                       //also check if the max is over the limit of the format, in that case all the pixels will be formatted properly
-            max = max - min;
-            for (int i = 0; i < image1->getHeight(); i++) {
-                for (int j = 0; j < image1->getWidth(); j++) {
-                    for (int k = 0; k < image1->getPixel(i, j)->getDim(); k++) {
-                        int val = image1->getPixel(i, j)->getChannel(k);
-                        if (image1->getFormat() == "P2") {
-                            val = (val < 0) ? 0 : (max > 65.535) ? (int) (((1.0 * (val - min)) / max) * 65.535) : val;
-                        } else {
-                            val = (val < 0) ? 0 : (max > 255) ? ((val - min) * 255) / max : val;
-                        }
-                        image1->getPixel(i, j)->setChannel(k, val);
-                    }
+        //normalizing each pixel of the new image
+        for (int i = 0; i < image1->getHeight(); i++) {
+            for (int j = 0; j < image1->getWidth(); j++) {
+                for (int k = 0; k < image1->getPixel(i, j)->getDim(); k++) {
+                    int val = image1->getPixel(i, j)->getChannel(k);
+                    val = (int)((1.0*(val-newMin))*(1.0*(max-min)/(newMax-newMin)));
+                    image1->getPixel(i, j)->setChannel(k, val);
                 }
-
             }
-            //resetting the maxval of the image
-            if (image1->getFormat() == "P2") {
-                if (max > 65535) max = 65535;
-            } else {
-                if (max > 255) max = 255;
-            }
-            image1->setMaxValue(max);
         }
+        image1->setMaxValue(image->getMaxValue());
 
-        if (image->getFormat() == "P3" && method_name == "ridge") {
+        if (tmp && method_name == "ridge") {
             delete image;
             image = tmp;
         }
