@@ -10,22 +10,30 @@ int main() {
         std::cin>>input;
         ImageFileHandler file = ImageFileHandler(input);
         BaseImage *image = createImage(file);
-        if (image != nullptr) {
-            KernelImageProcessing kip(image);
-            std::cout<<"Scegli il metodo con cui modificare l'immagine: \n"
-                       "(identity) (sharpen) (boxblur) (ridge) (gaussianblur3) (gaussianblur5) (unsharpmasking): "<<std::endl;
-            std::cin>>input;
-            BaseImage *image1 = kip.applyMethod(input);
-            if(image1) {
-                std::cout << "Inserisci il path dell'immagine da sovrascrivere:" << std::endl;
+        BaseImage * image1;
+        if (image != nullptr){
+            do {
+                KernelImageProcessing kip(image);
+                std::cout << "Scegli il metodo con cui modificare l'immagine: \n"
+                             "(identity) (sharpen) (boxblur) (ridge) (gaussianblur3) (gaussianblur5) (unsharpmasking): "
+                          << std::endl;
                 std::cin >> input;
-                ImageFileHandler file1 = ImageFileHandler(input);
-                file1.clear();
-                writeImagefile(image1, file1);
-                std::cout << "File sovrascritto correttamente" << std::endl;
-            }else{
-                std::cout << "Metodo scelto non valido"<<std::endl;
-            }
+                image1 = kip.applyMethod(input);
+                if (image1) {
+                    std::cout << "Inserisci il path dell'immagine da sovrascrivere:" << std::endl;
+                    std::cin >> input;
+                    ImageFileHandler file1 = ImageFileHandler(input);
+                    file1.clear();
+                    writeImagefile(image1, file1);
+                    std::cout << "File sovrascritto correttamente" << std::endl;
+                } else {
+                    std::cout << "Metodo scelto non valido" << std::endl;
+                }
+                std::cout<<"Inserisci 1 per continuare a modificare l'immagine"<<std::endl;
+                std::cin>>input;
+                delete image1;
+            }while(input == "1");
+            delete image;
         } else {
             std::cout << "Errore nella lettura del file"<<std::endl;
         }
