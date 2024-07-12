@@ -10,3 +10,10 @@ TEST(KernelImageProcessing, ImageNotValid){
     EXPECT_THROW(KernelImageProcessing kip(img), std::logic_error); //pixels arent initialised
     delete img;
 }
+
+TEST(KernelImageProcessing, MethodNotValid){
+    auto * img = Image<int>::createImage("../../test/ValidFile.ppm");
+    KernelImageProcessing kip(img);
+    EXPECT_FALSE(kip.applyMethod("pippo"));
+    delete img;
+}
