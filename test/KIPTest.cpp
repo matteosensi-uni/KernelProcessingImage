@@ -6,7 +6,7 @@
 
 
 TEST(KernelImageProcessing, ImageNotValid){
-    BaseImage * img = new Image<1>(100, 100, 255, "P2");
+    auto * img = new Image<int>(1, 100, 100, 255, "P2");
     EXPECT_THROW(KernelImageProcessing kip(img), std::logic_error); //pixels arent initialised
     delete img;
 }

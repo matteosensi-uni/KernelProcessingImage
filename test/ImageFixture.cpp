@@ -2,6 +2,7 @@
 
 #include "../Image.h"
 
+
 //classe Fixture per testare la classe Image
 class ImageFixture : public ::testing::Test {
 
@@ -11,7 +12,7 @@ protected:
     void TearDown() override{
         delete c;
     }
-    BaseImage *c = new Image<1>(100, 100, 255, "P2");
+    Image<int> *c = new Image<int>(1, 100, 100, 255, "P2");
 
 };
 
@@ -28,10 +29,14 @@ TEST_F(ImageFixture, SettingWidth){
 TEST_F(ImageFixture, SettingPixel){
     EXPECT_TRUE(c->getPixel(0,0));
     EXPECT_THROW(c->getPixel(100, 100), std::out_of_range);
-    EXPECT_THROW(c->setPixel(new Pixel<1>, 10, -1), std::out_of_range);
+    EXPECT_THROW(c->setPixel(new Pixel<int>(1), 10, -1), std::out_of_range);
 }
 
 TEST_F(ImageFixture, SettingMaxVal){
     EXPECT_EQ(c->getMaxValue(), 255);
     EXPECT_THROW(c->setMaxValue(-1), std::logic_error);
+}
+
+TEST_F(ImageFixture, NotInitializedImage){
+    EXPECT_FALSE(c->isInitialized()); //different files format
 }

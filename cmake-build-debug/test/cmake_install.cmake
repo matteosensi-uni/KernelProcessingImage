@@ -1,4 +1,4 @@
-# Install script for directory: C:/Users/sensi/CLionProjects/LabProg/test
+# Install script for directory: C:/Users/sensi/CLionProjects/KernelProcessingImage/test
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -39,6 +39,6 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/Users/sensi/CLionProjects/LabProg/cmake-build-debug/test/lib/googletest/cmake_install.cmake")
+  include("C:/Users/sensi/CLionProjects/KernelProcessingImage/cmake-build-debug/test/lib/googletest/cmake_install.cmake")
 endif()
 
