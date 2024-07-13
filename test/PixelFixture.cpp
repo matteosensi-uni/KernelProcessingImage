@@ -12,17 +12,18 @@ class PixelFixture : public ::testing::Test {
 
 protected:
     void SetUp() override {
-        c = new Pixel<int>(1);
     }
     void TearDown() override{
-        delete c;
     }
-    Pixel<int> *c = nullptr;
+    Pixel<int> c =  Pixel<int>(1);
 
 };
 
 TEST_F(PixelFixture, SettingValue){
-EXPECT_EQ(c->getChannel(0), -1);
-EXPECT_THROW(c->getChannel(3), std::out_of_range);
-EXPECT_THROW(c->setChannel(5, 3), std::out_of_range);
+    EXPECT_FALSE(c.isInitialized());
+    EXPECT_THROW(c.getChannel(0), std::logic_error); //pixel not initialized
+    EXPECT_THROW(c.getChannel(3), std::out_of_range);
+    EXPECT_THROW(c.setChannel(5, 3), std::out_of_range);
+    c.setChannel(0, 2);
+    EXPECT_TRUE(c.isInitialized());
 }

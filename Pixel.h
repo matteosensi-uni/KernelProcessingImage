@@ -23,15 +23,16 @@ public:
             for(int i = 0; i < dim; i++){
                 channels[i] = p.getChannel(i);
             }
-            initialized = true;
-        }else initialized = false;
+        }
+        initialized = p.isInitialized();
     }
     ~Pixel(){//cleaning memory used
         delete[] channels;
     }
     T getChannel(int i) const noexcept(false){//this method throws an exception if the given index isnt valid
         if(i >= 0 && i < dim)
-            return channels[i];
+            if(!initialized) throw std::logic_error("Channel isn't initialized");
+            else return channels[i];
         else throw std::out_of_range("Index of channel out of range");
     }
     void setChannel(int i, T value) noexcept(false){//this method throws an exception if the given index isnt valid

@@ -7,16 +7,18 @@
 
 
 TEST(ImageTest, ReadingEmptyFile){
-    Image<int> * img = Image<int>::createImage("../../test/fileVuoto.pgm");
-    EXPECT_FALSE(img); //empty file
-    img = Image<int>::createImage("../../test/ValidFile.ppm");
-    EXPECT_TRUE(img);//valid file
-    delete img;
+    EXPECT_THROW(Image<int>::createImage("../../test/fileVuoto.pgm"), std::logic_error); //empty file
+    EXPECT_NO_THROW(Image<int>::createImage("../../test/validFile.ppm")); //valid file
+}
+
+TEST(ImageTest, InvalidPath){
+    EXPECT_THROW(Image<int>::createImage("pippo"), std::logic_error); //invalid path
+    auto img = Image<int>::createImage("../../test/validFile.ppm");
+    EXPECT_THROW(img.writeImage("pippo"), std::logic_error); //invalid path
 }
 
 TEST(ImageTest, WritingOnInvalidFile){
-    auto * img = Image<int>::createImage("../../test/validFile.ppm");
-    EXPECT_THROW(img->writeImage("../../test/fileVuoto.pgm"), std::logic_error); //different files format
-    delete img;
+    auto img = Image<int>::createImage("../../test/validFile.ppm");
+    EXPECT_THROW(img.writeImage("../../test/fileVuoto.pgm"), std::logic_error); //different files format
 }
 
