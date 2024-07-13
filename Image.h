@@ -4,39 +4,44 @@
 
 #ifndef LABPROG_IMAGE_H
 #define LABPROG_IMAGE_H
+
 #include <string>
 #include <vector>
 #include "Pixel.h"
 #include <fstream>
+
 template<typename  T>
 class Image{
 public:
-    Image(int n, int w, int h, T max, const std::string& format): height(h), width(w), max_value(max), format(format){
+    Image(int n, int w, int h, T max, const std::string& format): format(format){
         //Allocating space for the image and setting every pixel
-        image = new Pixel<T>**[h];
+        setWidth(w);
+        setMaxValue(max);
+        setHeight(h);
         for(int i = 0; i < h; i++){
-            image[i] = new Pixel<T>*[w];
+            image.push_back(std::vector<Pixel<T>>());
             for(int j = 0; j < w; j++){
-                image[i][j] = new Pixel<T>(n);
+                image[i].push_back(Pixel<T>(n));
             }
         }
-        channels = n;
+        if(n > 0 && n <= 4){
+            channels = n;
+        }else{
+            throw std::logic_error("Number of channels must be >0 and <=4");
+        }
     }
 
     //copy constructor
     Image(const Image<T>& img): height(img.getHeight()), width(img.getWidth()), max_value(img.getMaxValue()), format(img.getFormat()), channels(img.getChannels()){
-        image = new Pixel<T>**[height];
         for(int i = 0; i < height; i++){
-            image[i] = new Pixel<T>*[width];
+            image.push_back(std::vector<Pixel<T>>());
             for(int j = 0; j < width; j++){
-                if(img.getPixel(i, j) != nullptr) {
-                    image[i][j] = new Pixel<T>(*img.getPixel(i, j));
-                }
+                image[i].push_back(img.getPixel(i, j));
             }
         }
     }
 
-    void setPixel(Pixel<T> * p, int i, int j) noexcept(false){
+    void setPixel(Pixel<T>& p, int i, int j) noexcept(false){
         if(i >= height || i < 0 || j < 0 || j >= width){ //if given indexes are wrong this method throws an exception
             throw std::out_of_range("Pixel out of range");
         }else{
@@ -44,11 +49,11 @@ public:
         }
     }
 
-    Pixel<T> * getPixel(int i, int j) const noexcept(false){//if given indexes are wrong this method throws an exception
+    Pixel<T>& getPixel(int i, int j) const noexcept(false){//if given indexes are wrong this method throws an exception
         if(i >= height || i < 0 || j < 0 || j >= width) {
             throw std::out_of_range("Pixel out of range");
         }
-        return image[i][j];
+        return const_cast<Pixel<T>&>(this->image[i][j]);
     }
 
     int getHeight() const {
@@ -91,34 +96,26 @@ public:
         return channels;
     }
 
-    ~Image(){ // cleaning memory from used space
-        for(int i = 0; i < height; i++){
-            for(int j = 0; j < width; j++){
-                if(image[i][j]!= nullptr)
-                    delete image[i][j];
-            }
-            delete image[i];
-        }
-        delete image;
-    }
-
-    static Image<T> * rgbtogray(Image<T> * img){ //method that transform a rgb image (3 channels) to a gray scale image (1 channel) based on the NTSC formula
+    static Image<T> * rgbtogray(Image<T>& img){ //method that transform a rgb image (3 channels) to a gray scale image (1 channel) based on the NTSC formula
         std::vector<float> rgb2gray = {0.299, 0.587, 0.114};
-        auto * image1 = new Image<T>(1,img->getWidth(), img->getHeight(), img->getMaxValue(), "P2");
-        for(int i = 0; i < img->getHeight(); i++) {
-            for (int j = 0; j < img->getWidth(); j++) {
-                float resultGray = 0;
-                image1->setPixel(new Pixel<T>(1), i, j);
-                for (int k = 0; k < image1->getPixel(i, j)->getDim(); ++k) {
-                    resultGray += (img->getPixel(i, j)->getChannel(k)) * rgb2gray[k];
+        if(img.isInitialized()) {
+            auto *image1 = new Image<T>(1, img.getWidth(), img.getHeight(), img.getMaxValue(), "P2");
+            for (int i = 0; i < img.getHeight(); i++) {
+                for (int j = 0; j < img.getWidth(); j++) {
+                    float resultGray = 0;
+                    auto * p = new Pixel<T>(1);
+                    image1->setPixel(*p, i, j);
+                    for (int k = 0; k < image1->getPixel(i, j).getDim(); ++k) {
+                        resultGray += (img.getPixel(i, j).getChannel(k)) * rgb2gray[k];
+                    }
+                    image1->getPixel(i, j).setChannel(0, static_cast<T>(resultGray));
                 }
-                image1->getPixel(i, j)->setChannel(0, static_cast<T>(resultGray));
             }
-        }
-        return image1;
+            return image1;
+        }else return nullptr;
     }
 
-    static Image<T> * createImage(const std::string& path){
+    static Image<T>& createImage(const std::string& path){
         int h, w;
         T max_value;
         std::string line, format;
@@ -169,11 +166,11 @@ public:
                                     j++;
                                 }
                                 if (j == channels) {
-                                    auto *pixel = new Pixel<T>(channels);
+                                    auto * pixel = new Pixel<T>(channels);
                                     for (int k = 0; k < j; k++) {
                                         pixel->setChannel(k, pixels[k]);
                                     }
-                                    image->setPixel(pixel, i / w, i % w);
+                                    image->setPixel(*pixel, i / w, i % w);
                                     i++;
                                     j = 0;
                                     pixels.clear();
@@ -185,24 +182,25 @@ public:
                     //checks if all the pixels are initialised
                     for (int k = 0; i < image->getHeight(); i++) {
                         for (int s = 0; j < image->getWidth(); j++) {
-                            for (int c = 0; k < image->getPixel(k, s)->getDim(); k++) {
-                                if (image->getPixel(k, s)->getChannel(c) == -1) return nullptr;
+                            if (!image->getPixel(k, s).isInitialized()){
+                                file.close();
+                                throw std::logic_error("Pixel arent initialized");
                             }
                         }
                     }
                     file.close();
-                    return image;
+                    return *image;
                 }else{
                     file.close();
-                    return nullptr;
+                    throw std::logic_error("Image file not valid");
                 }
             }else{
                 file.close();
-                return nullptr;
+                throw std::logic_error("Image file not valid");
             }
         }else{
             file.close();
-            return nullptr;
+            throw std::logic_error("Image file not valid");
         }
     }
 
@@ -221,13 +219,11 @@ public:
         int lineLength = 0;
         for(int i = 0; i < height; i++){
             for(int j = 0; j < width; j++){
+                if(!image[i][j].isInitialized()){
+                    throw std::logic_error("Given image isn't valid, some pixel aren't initialized");
+                }
                 for(int k = 0; k < channels; k++) {
-                    if(image[i][j] == nullptr){
-                        throw std::logic_error("Given image isn't valid, some pixel aren't initialized");
-                    }else if(image[i][j]->getChannel(k) == -1){
-                        throw std::logic_error("Given image isn't valid, some pixel aren't initialized");
-                    }
-                    std::string value = std::to_string(image[i][j]->getChannel(k)) + " ";
+                    std::string value = std::to_string(image[i][j].getChannel(k)) + " ";
                     if(lineLength + static_cast<int>(value.length()) > 70){
                         file<<"\n";
                         lineLength = static_cast<int>(value.length());
@@ -241,28 +237,23 @@ public:
         file.close();
     }
 
-    bool isInitialized(){//checks if all pixels are initialized
+    bool isInitialized(){
         for(int i = 0; i < height; i++){
             for(int j = 0; j < width; j++){
-                if(image[i][j]){
-                    for(int k = 0; k < channels; k++){
-                        if(image[i][j]->getChannel(k) < 0) return false;
-                    }
-                }else{
-                    return false;
-                }
+                if(!image[i][j].isInitialized()) return false;
             }
         }
         return true;
     }
 
 private:
-    Pixel<T>*** image; //matrice di pixel che compone l'immagine
+    std::vector<std::vector<Pixel<T>>> image;
     int channels;
     int height;
     int width;
     T max_value;
     std::string format;
+    //method that split a string into a vector of substrings based on a delimiter
     static std::vector<std::string> split(const std::string& s, const std::string& delimiter) {
         size_t start = 0, end, delim_len = delimiter.length();
         std::string token; //element of the vector
@@ -277,7 +268,7 @@ private:
         res.push_back (s.substr (start));
         return res;
     }
-
 };
+
 
 #endif //LABPROG_IMAGE_H

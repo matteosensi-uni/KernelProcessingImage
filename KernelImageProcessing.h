@@ -20,16 +20,16 @@ public:
         if(img->isInitialized()) image = img;
         else throw std::logic_error("Image must be initialised");
     }
-    Image<T> * identity() { return applyMethod("identity");}
-    Image<T> * ridge() { return applyMethod("ridge"); }
-    Image<T> * sharpen() { return applyMethod("sharpen");}
-    Image<T> * boxBlur() { return applyMethod("boxblur");}
-    Image<T> * gaussianBlur3x3() { return applyMethod("gaussianblur3");}
-    Image<T> * gaussianBlur5x5() { return applyMethod("gaussianblur5");}
-    Image<T> * unsharpMasking() { return applyMethod("unsharpmasking");}
-    Image<T> * applyMethod(std::string method_name);
+    Image<T> & identity() { return applyMethod("identity");}
+    Image<T> & ridge() { return applyMethod("ridge"); }
+    Image<T> & sharpen() { return applyMethod("sharpen");}
+    Image<T> & boxBlur() { return applyMethod("boxblur");}
+    Image<T> & gaussianBlur3x3() { return applyMethod("gaussianblur3");}
+    Image<T> & gaussianBlur5x5() { return applyMethod("gaussianblur5");}
+    Image<T> & unsharpMasking() { return applyMethod("unsharpmasking");}
+    Image<T> & applyMethod(std::string method_name);
 private:
-    int convolution(std::vector<std::vector<float>> kernel_matrix, int i, int j, int c){ //calculates resulting pixel after modifying it
+    float convolution(std::vector<std::vector<float>> kernel_matrix, int i, int j, int c){ //calculates resulting pixel after modifying it
         float sum = 0;
         int dim = (int)kernel_matrix.size();
         int w = image->getWidth(), h = image->getHeight();
@@ -38,30 +38,30 @@ private:
         for(int k = 0; k < dim; k++) {
             for (int s = 0; s < dim; s++) {
                 if(i+k-halfDim < 0){
-                    if(j+s-halfDim < 0) el = static_cast<float>(image->getPixel(0,0)->getChannel(c));
-                    else if(j + s -halfDim >= w) el = static_cast<float>(image->getPixel(0,w-1)->getChannel(c));
-                    else el = static_cast<float>(image->getPixel(0,j+s-halfDim)->getChannel(c));
+                    if(j+s-halfDim < 0) el = static_cast<float>(image->getPixel(0,0).getChannel(c));
+                    else if(j + s -halfDim >= w) el = static_cast<float>(image->getPixel(0,w-1).getChannel(c));
+                    else el = static_cast<float>(image->getPixel(0,j+s-halfDim).getChannel(c));
                 }else if(i+k-halfDim >= h){
-                    if(j+s-halfDim < 0) el = static_cast<float>(image->getPixel(h-1,0)->getChannel(c));
-                    else if(j + s -halfDim >= w) el = static_cast<float>(image->getPixel(h-1,w-1)->getChannel(c));
-                    else el = static_cast<float>(image->getPixel(h-1,j+s-halfDim)->getChannel(c));
+                    if(j+s-halfDim < 0) el = static_cast<float>(image->getPixel(h-1,0).getChannel(c));
+                    else if(j + s -halfDim >= w) el = static_cast<float>(image->getPixel(h-1,w-1).getChannel(c));
+                    else el = static_cast<float>(image->getPixel(h-1,j+s-halfDim).getChannel(c));
                 }else if(j+s-halfDim < 0){
-                    el = static_cast<float>(image->getPixel(i+k-halfDim,0)->getChannel(c));
+                    el = static_cast<float>(image->getPixel(i+k-halfDim,0).getChannel(c));
                 }else if(j+s-halfDim >= w){
-                    el = static_cast<float>(image->getPixel(i+k-halfDim,w-1)->getChannel(c));
+                    el = static_cast<float>(image->getPixel(i+k-halfDim,w-1).getChannel(c));
                 }else{
-                    el = static_cast<float>(image->getPixel(i+k-halfDim,j+s-halfDim)->getChannel(c));
+                    el = static_cast<float>(image->getPixel(i+k-halfDim,j+s-halfDim).getChannel(c));
                 }
                 sum += (el * kernel_matrix[k][s]);
             }
         }
-        return static_cast<T>(sum);
+        return sum;
     }
     Image<T> * image;
 };
 
 template<typename T>
-Image<T>* KernelImageProcessing<T>::applyMethod(std::string method_name) {
+Image<T> & KernelImageProcessing<T>::applyMethod(std::string method_name) {
     std::vector<std::vector<float>> matrix_selected;
     for(auto& c: method_name){
         c = (char)tolower(c);
@@ -71,40 +71,34 @@ Image<T>* KernelImageProcessing<T>::applyMethod(std::string method_name) {
         Image<T> * image1;
         Image<T> *tmp = nullptr;
         if (image->getFormat() == "P3" && method_name == "ridge") {
-            image1 = Image<T>::rgbtogray(image);
+            image1 = Image<T>::rgbtogray(*image);
             tmp = image;
             image =  new Image<T>(*image1);
         } else {
             image1 = new Image<T>(*image);
         }
-        for (int i = 0; i < image1->getHeight(); i++) {
-            for (int j = 0; j < image1->getWidth(); j++) {
-                for (int k = 0; k < image1->getChannels(); k++) {
-                    T val = convolution(matrix_selected, i, j, k);
-                    image1->getPixel(i, j)->setChannel(k, val);
-                }
-            }
-        }
         //pixel normalization
         //calculating max and min intensity of each pixel of the modified image
-        T newMax = image1->getPixel(0, 0)->getChannel(0);
-        T newMin = image1->getPixel(0, 0)->getChannel(0);
+
+        float newMax = convolution(matrix_selected, 0, 0, 0);
+        float newMin = convolution(matrix_selected, 0, 0, 0);
         for (int i = 0; i < image1->getHeight(); i++) {
             for (int j = 0; j < image1->getWidth(); j++) {
                 for (int k = 0; k < image1->getChannels(); k++) {
-                    T val = image1->getPixel(i, j)->getChannel(k);
+                    float val = convolution(matrix_selected, i, j, k);
                     if (newMax < val) newMax = val;
                     if (newMin > val) newMin = val;
                 }
             }
         }
+
         //calculating max and min intensity of each pixel of the base image
-        T max = image->getPixel(0, 0)->getChannel(0);
-        T min = image->getPixel(0, 0)->getChannel(0);
+        T max = image->getPixel(0, 0).getChannel(0);
+        T min = image->getPixel(0, 0).getChannel(0);
         for (int i = 0; i < image->getHeight(); i++) {
             for (int j = 0; j < image->getWidth(); j++) {
                 for (int k = 0; k < image->getChannels(); k++) {
-                    T val = image->getPixel(i, j)->getChannel(k);
+                    T val = image->getPixel(i, j).getChannel(k);
                     if (max < val) max = val;
                     if (min > val) min = val;
                 }
@@ -114,9 +108,9 @@ Image<T>* KernelImageProcessing<T>::applyMethod(std::string method_name) {
         for (int i = 0; i < image1->getHeight(); i++) {
             for (int j = 0; j < image1->getWidth(); j++) {
                 for (int k = 0; k < image1->getChannels(); k++) {
-                    int val = image1->getPixel(i, j)->getChannel(k);
-                    val = (T)((1.0*(val-newMin))*(1.0*(max-min)/(newMax-newMin)));
-                    image1->getPixel(i, j)->setChannel(k, val);
+                    float val = convolution(matrix_selected, i, j, k);
+                    val = (1.0*(val-newMin))*(1.0*(max-min)/(newMax-newMin));
+                    image1->getPixel(i, j).setChannel(k, static_cast<T>(val));
                 }
             }
         }
@@ -126,9 +120,9 @@ Image<T>* KernelImageProcessing<T>::applyMethod(std::string method_name) {
             delete image;
             image = tmp;
         }
-        return image1;
+        return *image1;
     }else{
-        return nullptr;
+        throw std::logic_error("Method selected is not valid");
     }
 }
 

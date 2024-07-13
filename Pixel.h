@@ -12,18 +12,19 @@ class Pixel{
 public:
     Pixel(int n){
         dim = n;
-        channels = new int[dim];
+        channels = new T[dim];
         //setting all the channles to negative numbers
-        for(int i = 0; i < dim; i++){
-            channels[i] = -1;
-        }
+        initialized = false;
     }
     Pixel(const Pixel<T>& p){
         dim = p.getDim();
-        channels = new int[dim];
-        for(int i = 0; i < dim; i++){
-            channels[i] = p.getChannel(i);
-        }
+        channels = new T[dim];
+        if(p.isInitialized()){
+            for(int i = 0; i < dim; i++){
+                channels[i] = p.getChannel(i);
+            }
+            initialized = true;
+        }else initialized = false;
     }
     ~Pixel(){//cleaning memory used
         delete[] channels;
@@ -37,17 +38,19 @@ public:
         if(i < 0 || i >= dim ){
             throw std::out_of_range("Index of channel out of range");
         }
+        initialized = true;
         channels[i] = value;
     }
     int getDim() const{
         return dim;
     }
 
+    bool isInitialized() const {return initialized;}
+
 private:
     T* channels;
     int dim;
+    bool initialized;
 };
-
-
 
 #endif //LABPROG_PIXEL_H
