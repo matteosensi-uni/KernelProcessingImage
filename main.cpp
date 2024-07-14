@@ -5,7 +5,7 @@ int main() {
         std::string input;
         std::cout<<"Inserisci il path dell'immagine da modificare:"<<std::endl;
         std::cin>>input;
-        auto image = Image<unsigned int>::createImage(input);
+        auto image = Image<unsigned int>(input);
         do {
             KernelImageProcessing<unsigned int> kip(&image);
             std::cout << "Scegli il metodo con cui modificare l'immagine: \n"

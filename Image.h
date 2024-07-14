@@ -13,6 +13,9 @@
 template<typename  T>
 class Image{
 public:
+    Image(const std::string& path){
+        loadImage(path);
+    }
     Image(int n, int w, int h, T max, const std::string& format): format(format){
         //Allocating space for the image and setting every pixel
         setWidth(w);
@@ -115,95 +118,6 @@ public:
         }else return nullptr;
     }
 
-    static Image<T>& createImage(const std::string& path){
-        int h, w;
-        T max_value;
-        std::string line, format;
-        Image<T> * image;
-        std::vector<std::string> splitString;
-        std::fstream file;
-        file.open(path);
-        if(!file) throw std::logic_error("Path non valido per la lettura");
-        do{//reads the format
-            std::getline(file, line);
-        }while(line != "P2" && line != "P3" && !file.eof());
-        if(!file.eof()){
-            format = line;
-            do {
-                std::getline(file, line);
-            } while (line[0] == '#' || line.empty() || line == " " && !file.eof());//skips comments and empty lines
-            if(!file.eof()) {
-                splitString = split(line, " ");
-                //reads width and height
-                for (int i = 0, j = 0; i < splitString.size() && j < 2; i++) {
-                    if (!splitString[i].empty() && splitString[i] != " " && j == 0) {
-                        w = std::stoi(splitString[i]);
-                        j++;
-                    } else if (!splitString[i].empty() && splitString[i] != " " && j == 1) {
-                        h = std::stoi(splitString[i]);
-                        j++;
-                    }
-                }
-                do {
-                    std::getline(file, line);
-                } while (line[0] == '#' || line.empty() || line == " " && !file.eof());//skips comments and empty lines
-                if (!file.eof()) {
-                    max_value = static_cast<T>(std::stof(line)); //reads maxval
-                    int channels;
-                    if (format == "P2") channels = 1;
-                    else channels = 3;
-                    image = new Image<T>(channels, w, h, max_value, format);
-                    int i = 0, j = 0;
-                    std::vector<T> pixels;
-                    //reading pixels
-                    while (!file.eof()) {
-                        std::getline(file, line);
-                        if (!line.empty() && line[0] != '#') {
-                            splitString = split(line, " ");
-                            for (auto &el: splitString) { //reads 3 channels for every pixel
-                                if (!el.empty() && el != " ") {
-                                    pixels.push_back(static_cast<T>(std::stof(el)));
-                                    j++;
-                                }
-                                if (j == channels) {
-                                    auto * pixel = new Pixel<T>(channels);
-                                    for (int k = 0; k < j; k++) {
-                                        pixel->setChannel(k, pixels[k]);
-                                    }
-                                    image->setPixel(*pixel, i / w, i % w);
-                                    i++;
-                                    j = 0;
-                                    pixels.clear();
-                                }
-                            }
-                        }
-                    }
-                    file.seekg(0);
-                    //checks if all the pixels are initialised
-                    for (int k = 0; i < image->getHeight(); i++) {
-                        for (int s = 0; j < image->getWidth(); j++) {
-                            if (!image->getPixel(k, s).isInitialized()){
-                                file.close();
-                                throw std::logic_error("Pixel arent initialized");
-                            }
-                        }
-                    }
-                    file.close();
-                    return *image;
-                }else{
-                    file.close();
-                    throw std::logic_error("Image file not valid");
-                }
-            }else{
-                file.close();
-                throw std::logic_error("Image file not valid");
-            }
-        }else{
-            file.close();
-            throw std::logic_error("Image file not valid");
-        }
-    }
-
     void writeImage(const std::string& path){
         //checks if either the format of the file modified and image are equal
         if(format == "P2" && split(path, ".").back() != "pgm")
@@ -254,7 +168,7 @@ private:
     T max_value;
     std::string format;
     //method that split a string into a vector of substrings based on a delimiter
-    static std::vector<std::string> split(const std::string& s, const std::string& delimiter) {
+    std::vector<std::string> split(const std::string& s, const std::string& delimiter) {
         size_t start = 0, end, delim_len = delimiter.length();
         std::string token; //element of the vector
         std::vector<std::string> res; // output vector
@@ -267,6 +181,98 @@ private:
 
         res.push_back (s.substr (start));
         return res;
+    }
+    void loadImage(const std::string& path){
+        int h, w;
+        std::string line;
+        std::vector<std::string> splitString;
+        std::fstream file;
+        file.open(path);
+        if(!file) throw std::logic_error("Path non valido per la lettura");
+        do{//reads the format
+            std::getline(file, line);
+        }while(line != "P2" && line != "P3" && !file.eof());
+        if(!file.eof()){
+            format = line;
+            do {
+                std::getline(file, line);
+            } while (line[0] == '#' || line.empty() || line == " " && !file.eof());//skips comments and empty lines
+            if(!file.eof()) {
+                splitString = split(line, " ");
+                //reads width and height
+                for (int i = 0, j = 0; i < splitString.size() && j < 2; i++) {
+                    if (!splitString[i].empty() && splitString[i] != " " && j == 0) {
+                        w = std::stoi(splitString[i]);
+                        j++;
+                    } else if (!splitString[i].empty() && splitString[i] != " " && j == 1) {
+                        h = std::stoi(splitString[i]);
+                        j++;
+                    }
+                }
+                do {
+                    std::getline(file, line);
+                } while (line[0] == '#' || line.empty() || line == " " && !file.eof());//skips comments and empty lines
+                if (!file.eof()) {
+                    max_value = static_cast<T>(std::stof(line)); //reads maxval
+                    if (format == "P2") channels = 1;
+                    else channels = 3;
+                    setHeight(h);
+                    setWidth(w);
+                    int i = 0, j = 0;
+                    std::vector<T> pixels;
+                    //reading pixels
+                    image.clear();
+                    for(int k = 0; k < h; k++){
+                        image.push_back(std::vector<Pixel<T>>());
+                        for(int s = 0; s < w; s++){
+                            image[k].push_back(Pixel<T>(channels));
+                        }
+                    }
+                    while (!file.eof()) {
+                        std::getline(file, line);
+                        if (!line.empty() && line[0] != '#') {
+                            splitString = split(line, " ");
+                            for (auto &el: splitString) {
+                                if (!el.empty() && el != " ") {
+                                    pixels.push_back(static_cast<T>(std::stof(el)));
+                                    j++;
+                                }
+                                if (j == channels) {
+                                    auto * pixel = new Pixel<T>(channels);
+                                    for (int k = 0; k < j; k++) {
+                                        pixel->setChannel(k, pixels[k]);
+                                    }
+                                    setPixel(*pixel, i / w, i % w);
+                                    i++;
+                                    j = 0;
+                                    pixels.clear();
+                                }
+                            }
+                        }
+                    }
+                    file.seekg(0);
+                    //checks if all the pixels are initialised
+                    for (int k = 0; i < getHeight(); i++) {
+                        for (int s = 0; j < getWidth(); j++) {
+                            if (!getPixel(k, s).isInitialized()){
+                                file.close();
+                                throw std::logic_error("Pixel arent initialized");
+                            }
+                        }
+                    }
+                    file.close();
+                }else{
+                    file.close();
+                    throw std::logic_error("Image file not valid");
+                }
+            }else{
+                file.close();
+                throw std::logic_error("Image file not valid");
+            }
+        }else{
+            file.close();
+            throw std::logic_error("Image file not valid");
+        }
     }
 };
 

@@ -11,7 +11,7 @@ TEST(KernelImageProcessing, ImageNotValid){
 }
 
 TEST(KernelImageProcessing, MethodNotValid){
-    auto  img = Image<int>::createImage("../../test/ValidFile.ppm");
+    auto  img = Image<int>("../../test/ValidFile.ppm");
     KernelImageProcessing kip(&img);
     EXPECT_THROW(kip.applyMethod("pippo"), std::logic_error);
 }
