@@ -32,7 +32,3 @@ TEST_F(ImageFixture, SettingMaxVal){
     EXPECT_EQ(c.getMaxValue(), 255);
     EXPECT_THROW(c.setMaxValue(-1), std::logic_error);
 }
-
-TEST_F(ImageFixture, NotInitializedImage){
-    EXPECT_FALSE(c.isInitialized()); //pixels aren't initialized
-}

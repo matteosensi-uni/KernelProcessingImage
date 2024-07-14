@@ -15,10 +15,9 @@ public:
     explicit KernelImageProcessing(Image<T> * img) noexcept(false) {
         //checking if the given image is valid
         if(!img){
-            throw std::logic_error("Image must be initialised");
+            throw std::logic_error("Image can't be a null pointer");
         }
-        if(img->isInitialized()) image = img;
-        else throw std::logic_error("Image must be initialised");
+        image = img;
     }
     Image<T> & identity() { return applyMethod("identity");}
     Image<T> & ridge() { return applyMethod("ridge"); }

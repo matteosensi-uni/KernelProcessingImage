@@ -7,7 +7,7 @@
 
 TEST(KernelImageProcessing, ImageNotValid){
     auto  img = Image<int>(1, 100, 100, 255, "P2");
-    EXPECT_THROW(KernelImageProcessing kip(&img), std::logic_error); //pixels arent initialised
+    EXPECT_NO_THROW(KernelImageProcessing kip(&img)); //pixels will be initialised to max_val
 }
 
 TEST(KernelImageProcessing, MethodNotValid){

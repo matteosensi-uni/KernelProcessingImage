@@ -17,29 +17,33 @@ public:
         loadImage(path);
     }
     Image(int n, int w, int h, T max, const std::string& format): format(format){
-        //Allocating space for the image and setting every pixel
         setWidth(w);
         setMaxValue(max);
         setHeight(h);
+        if(n > 0 && n <= 4) channels = n;
+        else throw std::logic_error("Number of channels must be >0 and <=4");
         for(int i = 0; i < h; i++){
             image.push_back(std::vector<Pixel<T>>());
-            for(int j = 0; j < w; j++){
-                image[i].push_back(Pixel<T>(n));
+            auto p = Pixel<T>(channels);
+            for(int j = 0; j < width; j++) {
+                for (int k = 0; k < channels; k++) {
+                    p.setChannel(k, max_value);
+                }
+                image[i].push_back(p);
             }
         }
-        if(n > 0 && n <= 4){
-            channels = n;
-        }else{
-            throw std::logic_error("Number of channels must be >0 and <=4");
-        }
-    }
 
+    }
     //copy constructor
     Image(const Image<T>& img): height(img.getHeight()), width(img.getWidth()), max_value(img.getMaxValue()), format(img.getFormat()), channels(img.getChannels()){
         for(int i = 0; i < height; i++){
             image.push_back(std::vector<Pixel<T>>());
             for(int j = 0; j < width; j++){
-                image[i].push_back(img.getPixel(i, j));
+                auto p = Pixel<T>(channels);
+                for(int k =0; k < channels; k++){
+                    p.setChannel(k, img.getPixel(i, j).getChannel(k));
+                }
+                image[i].push_back(p);
             }
         }
     }
@@ -131,11 +135,11 @@ public:
         }
         file<<format + "\n" + std::to_string(width)+" "+std::to_string(height)+"\n"+std::to_string(max_value)+"\n";
         int lineLength = 0;
+        if(!isInitialized()){
+            throw std::logic_error("Given image isn't valid, some pixel aren't initialized");
+        }
         for(int i = 0; i < height; i++){
             for(int j = 0; j < width; j++){
-                if(!image[i][j].isInitialized()){
-                    throw std::logic_error("Given image isn't valid, some pixel aren't initialized");
-                }
                 for(int k = 0; k < channels; k++) {
                     std::string value = std::to_string(image[i][j].getChannel(k)) + " ";
                     if(lineLength + static_cast<int>(value.length()) > 70){
@@ -151,37 +155,6 @@ public:
         file.close();
     }
 
-    bool isInitialized(){
-        for(int i = 0; i < height; i++){
-            for(int j = 0; j < width; j++){
-                if(!image[i][j].isInitialized()) return false;
-            }
-        }
-        return true;
-    }
-
-private:
-    std::vector<std::vector<Pixel<T>>> image;
-    int channels;
-    int height;
-    int width;
-    T max_value;
-    std::string format;
-    //method that split a string into a vector of substrings based on a delimiter
-    std::vector<std::string> split(const std::string& s, const std::string& delimiter) {
-        size_t start = 0, end, delim_len = delimiter.length();
-        std::string token; //element of the vector
-        std::vector<std::string> res; // output vector
-
-        while ((end = s.find(delimiter, start)) != std::string::npos) {
-            token = s.substr (start, end - start);
-            start = end + delim_len;
-            res.push_back (token);
-        }
-
-        res.push_back (s.substr (start));
-        return res;
-    }
     void loadImage(const std::string& path){
         int h, w;
         std::string line;
@@ -252,13 +225,9 @@ private:
                     }
                     file.seekg(0);
                     //checks if all the pixels are initialised
-                    for (int k = 0; i < getHeight(); i++) {
-                        for (int s = 0; j < getWidth(); j++) {
-                            if (!getPixel(k, s).isInitialized()){
-                                file.close();
-                                throw std::logic_error("Pixel arent initialized");
-                            }
-                        }
+                    if(!isInitialized()){
+                        file.close();
+                        throw std::logic_error("Pixel arent initialized");
                     }
                     file.close();
                 }else{
@@ -273,6 +242,37 @@ private:
             file.close();
             throw std::logic_error("Image file not valid");
         }
+    }
+
+private:
+    std::vector<std::vector<Pixel<T>>> image;
+    int channels;
+    int height;
+    int width;
+    T max_value;
+    std::string format;
+    //method that split a string into a vector of substrings based on a delimiter
+    std::vector<std::string> split(const std::string& s, const std::string& delimiter) {
+        size_t start = 0, end, delim_len = delimiter.length();
+        std::string token; //element of the vector
+        std::vector<std::string> res; // output vector
+
+        while ((end = s.find(delimiter, start)) != std::string::npos) {
+            token = s.substr (start, end - start);
+            start = end + delim_len;
+            res.push_back (token);
+        }
+
+        res.push_back (s.substr (start));
+        return res;
+    }
+    bool isInitialized(){
+        for(int i = 0; i < height; i++){
+            for(int j = 0; j < width; j++){
+                if(!image[i][j].isInitialized()) return false;
+            }
+        }
+        return true;
     }
 };
 
